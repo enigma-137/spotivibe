@@ -23,14 +23,19 @@ export default function HomePage() {
   const router = useRouter()
 
 
- useEffect(() => {
-    if (user) {
-      router.push("/dashboard")
-    }
-  }, [user, router])
+//  useEffect(() => {
+  
+//   }, [user, router])
 
   const signInWithSpotify = async () => {
+
+    if (user) {
+      router.push("/dashboard")
+      return
+    }
     const { error } = await supabase.auth.signInWithOAuth({
+
+
       provider: "spotify",
       
       options: {
@@ -59,7 +64,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-black to-emerald-900 flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
@@ -131,7 +136,7 @@ export default function HomePage() {
             </motion.div>
 
             <motion.p variants={fadeInUp} className="text-sm md:text-2xl text-green-200 mb-12 leading-relaxed">
-              Create personalized playlists powered by cutting-edge AI. Connect with Spotify and let our intelligent 
+              Create personalized playlists. Connect with Spotify and let our intelligent 
               algorithm curate the perfect sonic experience tailored to your taste.
             </motion.p>
 
@@ -141,8 +146,9 @@ export default function HomePage() {
                 size="lg"
                 className="px-12 py-6 text-lg font-semibold rounded-full shadow-lg bg-green-500 hover:bg-green-400 text-black transition-all duration-200 drop-shadow-glow"
               >
-                <Radio className="w-6 h-6 mr-3" />
+                <Radio className="w-6 h-6 mr-1" />
                 Connect with Spotify
+                
               </Button>
               <p className="text-sm text-green-300 mt-6 opacity-80">
                 Secure connection • Only accesses your music preferences
@@ -175,7 +181,7 @@ export default function HomePage() {
               How It <span className="text-green-400">Works</span>
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-xl text-green-200 max-w-2xl mx-auto">
-              Three simple steps to discover your perfect playlist
+              Three simple steps to build your perfect playlist
             </motion.p>
           </motion.div>
 
@@ -211,7 +217,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-2xl font-semibold mb-4 text-green-200">AI Magic</h3>
                   <p className="text-green-300 leading-relaxed">
-                    Our advanced AI analyzes your preferences and creates a harmonious blend of tracks that flow perfectly together.
+                    The algorithm analyzes your preferences and creates a harmonious blend of tracks that flow perfectly together.
                   </p>
                 </CardContent>
               </Card>
@@ -256,8 +262,8 @@ export default function HomePage() {
               size="lg"
               className="px-12 py-6 text-lg font-semibold rounded-full bg-green-500 hover:bg-green-400 text-black animate-glow-pulse drop-shadow-glow"
             >
-              <Mic className="w-6 h-6 mr-3" />
-              Start Your Journey
+              <Mic className="w-6 h-6 mr-1" />
+              Start Vibing!
             </Button>
           </motion.div>
         </div>

@@ -23,12 +23,12 @@ export function ArtistCard({ artist, selected, onToggle }: ArtistCardProps) {
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="cursor-pointer" onClick={onToggle}>
       <Card
         className={`relative overflow-hidden transition-all duration-200 ${
-          selected ? "ring-2 ring-green-500 bg-green-50" : "hover:shadow-lg bg-white/80 backdrop-blur"
+          selected ? "ring-2 ring-green-500 bg-green-300 text-gray-900" : "hover:shadow-lg bg-white/30 backdrop-blur"
         }`}
       >
         <CardContent className="p-4">
           <div className="relative mb-3">
-            <div className="aspect-square rounded-lg overflow-hidden bg-gray-200">
+            <div className="aspect-square rounded-lg overflow-hidden bg-gray-400">
               {artist.images[0] ? (
                 <Image
                   src={artist.images[0].url || "/placeholder.svg"}
@@ -54,7 +54,7 @@ export function ArtistCard({ artist, selected, onToggle }: ArtistCardProps) {
 
           <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 mb-1">{artist.name}</h3>
 
-          {artist.genres.length > 0 && <p className="text-xs text-gray-500 line-clamp-1">{artist.genres[0]}</p>}
+          {artist.genres.length > 0 && <p className={`text-xs line-clamp-1 ${selected ? "text-gray-900" : "text-gray-100"}`}>{artist.genres[0]}</p>}
         </CardContent>
       </Card>
     </motion.div>

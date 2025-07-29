@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get Spotify access token from user metadata
-    const spotifyAccessToken = user.user_metadata?.provider_token
+    const spotifyAccessToken = request.headers.get("x-spotify-token")
 
     if (!spotifyAccessToken) {
       return NextResponse.json({ error: "No Spotify access token found" }, { status: 401 })

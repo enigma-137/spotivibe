@@ -48,15 +48,15 @@ export function PlaylistHistory() {
 
   if (playlists.length === 0) {
     return (
-      <Card className="bg-white/80 backdrop-blur">
+      <Card className="bg-zinc-900 backdrop-blur">
         <CardHeader>
-          <CardTitle className="flex items-center">
+          <CardTitle className="flex items-center text-gray-100">
             <Music className="w-5 h-5 mr-2 text-green-600" />
             Playlist History
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 text-center py-4">No playlists created yet. Generate your first playlist!</p>
+          <p className="text-gray-200 text-center py-4">No playlists created yet. Generate your first playlist!</p>
         </CardContent>
       </Card>
     )

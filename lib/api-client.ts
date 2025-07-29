@@ -1,21 +1,44 @@
 import { supabase } from "./supabase"
 
 // Helper function to make authenticated API calls
-export async function makeAuthenticatedRequest(url: string, options: RequestInit = {}) {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+export async function makeAuthenticatedRequest(
+  url: string,
+  options: RequestInit = {},
+  supabaseJwt: string | null,
+  spotifyAccessToken?: string | null
+) {
+  if (!supabaseJwt) {
+    throw new Error("No Supabase JWT found")
+  }
 
-  if (!session?.access_token) {
-    throw new Error("No session found")
+  // Normalize headers to a plain object
+  let baseHeaders: Record<string, string> = {}
+  if (options.headers) {
+    if (options.headers instanceof Headers) {
+      options.headers.forEach((value, key) => {
+        baseHeaders[key] = value
+      })
+    } else if (Array.isArray(options.headers)) {
+      options.headers.forEach(([key, value]) => {
+        baseHeaders[key] = value
+      })
+    } else {
+      baseHeaders = { ...options.headers } as Record<string, string>
+    }
+  }
+
+  const headers: Record<string, string> = {
+    ...baseHeaders,
+    Authorization: `Bearer ${supabaseJwt}`,
+    "Content-Type": "application/json",
+  }
+
+  if (spotifyAccessToken) {
+    headers["X-Spotify-Token"] = spotifyAccessToken
   }
 
   return fetch(url, {
     ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${session.access_token}`,
-      "Content-Type": "application/json",
-    },
+    headers,
   })
 }

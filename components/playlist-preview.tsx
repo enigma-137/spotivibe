@@ -27,11 +27,11 @@ interface PlaylistPreviewProps {
 
 export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, saving }: PlaylistPreviewProps) {
   return (
-    <Card className="bg-white/80 backdrop-blur">
+    <Card className="bg-black backdrop-blur">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center">
-            <Play className="w-5 h-5 mr-2 text-green-600" />
+          <CardTitle className="flex items-center text-gray-100 text-xs">
+            <Play className="w-5 h-5 mr-2 text-green-900" />
             Generated Playlist ({tracks.length} tracks)
           </CardTitle>
           <div className="flex space-x-2">
@@ -39,9 +39,9 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
               variant="outline"
               onClick={onRegenerate}
               disabled={generating}
-              className="border-green-200 hover:bg-green-50 bg-transparent"
+              className="border-green-200 hover:bg-green-50 text-gray-100 bg-transparent"
             >
-              {generating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RotateCcw className="w-4 h-4 mr-2" />}
+              {generating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <RotateCcw className="w-4 h-4 mr-2" />}
               Regenerate
             </Button>
             <Button
@@ -81,13 +81,13 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-gray-900 truncate">{track.name}</p>
+                <p className="font-medium text-sm text-gray-100 truncate">{track.name}</p>
                 <p className="text-xs text-gray-500 truncate">
                   {track.artists.map((artist) => artist.name).join(", ")}
                 </p>
               </div>
 
-              <div className="text-xs text-gray-400 flex-shrink-0">#{index + 1}</div>
+              <div className="text-xs text-gray-200 flex-shrink-0">#{index + 1}</div>
             </motion.div>
           ))}
         </div>

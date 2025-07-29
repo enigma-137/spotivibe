@@ -14,7 +14,7 @@ import { PlaylistHistory } from "@/components/play-history"
 import { Header } from "@/components/header"
 import { Loader2, Sparkles } from "lucide-react"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { makeAuthenticatedRequest } from "@/lib/api-client"
 
 interface Artist {
@@ -38,6 +38,7 @@ interface Track {
 export default function Dashboard() {
   const { user, session, loading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [artists, setArtists] = useState<Artist[]>([])
   const [selectedArtists, setSelectedArtists] = useState<Set<string>>(new Set())
   const [generatedTracks, setGeneratedTracks] = useState<Track[]>([])
@@ -46,6 +47,51 @@ export default function Dashboard() {
   const [saving, setSaving] = useState(false)
   const [includeRelated, setIncludeRelated] = useState(false)
   const [dataSource, setDataSource] = useState<"top" | "recent">("top")
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [refreshToken, setRefreshToken] = useState<string | null>(null)
+  const [supabaseJwt, setSupabaseJwt] = useState<string | null>(null)
+
+  // Parse tokens from URL hash and save to localStorage, then remove from URL
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""))
+    const supabaseJwt = hashParams.get("access_token")
+    const spotifyToken = hashParams.get("provider_token")
+    const refresh = hashParams.get("refresh_token")
+
+    if (supabaseJwt) {
+      setSupabaseJwt(supabaseJwt)
+      localStorage.setItem("supabaseJwt", supabaseJwt)
+    }
+    if (spotifyToken) {
+      setAccessToken(spotifyToken)
+      localStorage.setItem("spotifyToken", spotifyToken)
+    }
+    if (refresh) {
+      setRefreshToken(refresh)
+      localStorage.setItem("refreshToken", refresh)
+    }
+
+    // To remove tokens from URL after parsing
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname)
+    }
+  }, [])
+
+  // Fallback
+  useEffect(() => {
+    if (!supabaseJwt) {
+      const storedJwt = localStorage.getItem("supabaseJwt")
+      if (storedJwt) setSupabaseJwt(storedJwt)
+    }
+    if (!accessToken) {
+      const storedSpotify = localStorage.getItem("spotifyToken")
+      if (storedSpotify) setAccessToken(storedSpotify)
+    }
+    if (!refreshToken) {
+      const storedRefresh = localStorage.getItem("refreshToken")
+      if (storedRefresh) setRefreshToken(storedRefresh)
+    }
+  }, [supabaseJwt, accessToken, refreshToken])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -62,7 +108,12 @@ export default function Dashboard() {
   const fetchArtists = async () => {
     setLoadingArtists(true)
     try {
-      const response = await makeAuthenticatedRequest(`/api/spotify/artists?source=${dataSource}`)
+      const response = await makeAuthenticatedRequest(
+        `/api/spotify/artists?source=${dataSource}`,
+        {},
+        supabaseJwt,      // Supabase JWT for Authorization header
+        accessToken       // Spotify token for X-Spotify-Token header
+      )
       if (response.ok) {
         const data = await response.json()
         setArtists(data.artists)
@@ -95,13 +146,18 @@ export default function Dashboard() {
 
     setGenerating(true)
     try {
-      const response = await makeAuthenticatedRequest("/api/spotify/generate-playlist", {
-        method: "POST",
-        body: JSON.stringify({
-          artistIds: Array.from(selectedArtists),
-          includeRelated,
-        }),
-      })
+      const response = await makeAuthenticatedRequest(
+        "/api/spotify/generate-playlists",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            artistIds: Array.from(selectedArtists),
+            includeRelated,
+          }),
+        },
+         supabaseJwt,      // Supabase JWT for Authorization header
+        accessToken 
+      )
 
       if (response.ok) {
         const data = await response.json()
@@ -123,13 +179,18 @@ export default function Dashboard() {
 
     setSaving(true)
     try {
-      const response = await makeAuthenticatedRequest("/api/spotify/save-playlist", {
-        method: "POST",
-        body: JSON.stringify({
-          tracks: generatedTracks,
-          name: `Generated Playlist - ${new Date().toLocaleDateString()}`,
-        }),
-      })
+      const response = await makeAuthenticatedRequest(
+        "/api/spotify/save-playlist",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            tracks: generatedTracks,
+            name: `Your Playlist - ${new Date().toLocaleDateString()}`,
+          }),
+        },
+        supabaseJwt,      // Supabase JWT for Authorization header
+        accessToken 
+      )
 
       if (response.ok) {
         toast.success("Playlist saved successfully! Check your Spotify account")
@@ -171,7 +232,7 @@ export default function Dashboard() {
                 <Card className="bg-zinc-900 border border-zinc-700 rounded-xl shadow-md">
                   <CardContent className="p-6 space-y-4">
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                      <div className="space-y-2">
+                      <div className="space-y-2 text-gray-100">
                         <Label htmlFor="data-source">Data Source</Label>
                         <Tabs value={dataSource} onValueChange={(value) => setDataSource(value as "top" | "recent")}> 
                           <TabsList className="bg-zinc-800 border border-zinc-700 rounded-md">
@@ -180,8 +241,8 @@ export default function Dashboard() {
                           </TabsList>
                         </Tabs>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Switch id="include-related" checked={includeRelated} onCheckedChange={setIncludeRelated} />
+                      <div className="flex items-center text-red-100 space-x-2">
+                        <Switch id="include-related"   checked={includeRelated} onCheckedChange={setIncludeRelated} />
                         <Label htmlFor="include-related">Include related artists</Label>
                       </div>
                     </div>
