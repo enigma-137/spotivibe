@@ -6,14 +6,14 @@ import { motion } from "framer-motion"
 // import heroImage from "@/assets/hero-audio-studio.jpg"
 import Image from "next/image"
 
-import { createAuthClient } from "better-auth/client"
+// import { createAuthClient } from "better-auth/client"
 
 import { useAuth } from "./providers"
 import { supabase } from "@/lib/supabase"
 
 
 
-import { useSession, signIn } from "@/lib/auth-client"
+// import { useSession, signIn } from "@/lib/auth-client"
 
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -48,7 +48,7 @@ export default function HomePage() {
           "playlist-modify-public",
           "playlist-modify-private",
         ].join(" "),
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000/dashboard",
       },
     })
 
