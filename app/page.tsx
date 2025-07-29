@@ -48,7 +48,7 @@ export default function HomePage() {
           "playlist-modify-public",
           "playlist-modify-private",
         ].join(" "),
-        redirectTo: process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000/dashboard",
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     })
 
@@ -276,7 +276,7 @@ export default function HomePage() {
             <Music className="w-6 h-6 text-green-400" />
             <span className="text-lg font-semibold"> SpotiVibe</span>
             <span>•</span>
-            <span>Powered by cutting-edge AI technology</span>
+            <span className="text-xs">Powered by <a href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Spotify</a></span>
           </div>
         </div>
       </footer>
