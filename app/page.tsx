@@ -215,7 +215,7 @@ export default function HomePage() {
                     <Sparkles className="w-16 h-16 text-green-400 mx-auto group-hover:animate-float drop-shadow-glow" />
                     <div className="absolute inset-0 w-16 h-16 text-green-400 opacity-0 group-hover:opacity-30 mx-auto animate-ping" />
                   </div>
-                  <h3 className="text-2xl font-semibold mb-4 text-green-200">AI Magic</h3>
+                  <h3 className="text-2xl font-semibold mb-4 text-green-200">Magic</h3>
                   <p className="text-green-300 leading-relaxed">
                     The algorithm analyzes your preferences and creates a harmonious blend of tracks that flow perfectly together.
                   </p>
@@ -255,7 +255,7 @@ export default function HomePage() {
               Ready to Experience the <span className="text-green-400">Future</span> of Music?
             </h2>
             <p className="text-xl text-green-200 mb-12">
-              Join thousands of music lovers who have already discovered their perfect sound with Sonic Glow AI.
+              Join other music lovers who have already discovered their perfect sound with Spotivibes  .
             </p>
             <Button
               onClick={() => signInWithSpotify()}
