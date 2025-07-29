@@ -27,7 +27,7 @@ interface PlaylistPreviewProps {
 
 export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, saving }: PlaylistPreviewProps) {
   return (
-   <Card className="bg-black backdrop-blur max-w-full sm:max-w-lg mx-auto w-full px-2 sm:px-3 py-2 sm:py-4">
+    <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           {/* CardTitle above buttons on mobile */}
@@ -68,15 +68,15 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.02 }}
-              className="flex items-center space-x-3 p-2 rounded-lg hover:bg-green-50 transition-colors"
+              className="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-green-50 transition-colors"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded overflow-hidden bg-gray-200 flex-shrink-0">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded overflow-hidden bg-gray-200 flex-shrink-0">
                 {track.album.images[0] ? (
                   <Image
                     src={track.album.images[0].url || "/placeholder.svg"}
                     alt={track.album.name}
-                    width={48}
-                    height={48}
+                    width={36}
+                    height={36}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -85,13 +85,13 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-gray-100 truncate">{track.name}</p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="font-medium text-xs sm:text-sm text-gray-100 truncate">{track.name}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 truncate">
                   {track.artists.map((artist) => artist.name).join(", ")}
                 </p>
               </div>
 
-              <div className="text-xs text-gray-200 flex-shrink-0 w-6 text-center sm:w-auto">#{index + 1}</div>
+              <div className="text-[10px] sm:text-xs text-gray-200 flex-shrink-0 w-5 text-center sm:w-auto">#{index + 1}</div>
             </motion.div>
           ))}
         </div>
