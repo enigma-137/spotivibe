@@ -30,29 +30,35 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
     <Card className="bg-black backdrop-blur">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center text-gray-100 text-xs">
-            <Play className="w-5 h-5 mr-2 text-green-900" />
-            Generated Playlist ({tracks.length} tracks)
-          </CardTitle>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={onRegenerate}
-              disabled={generating}
-              className="border-green-200 hover:bg-green-50 text-gray-100 bg-transparent"
-            >
-              {generating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <RotateCcw className="w-4 h-4 mr-2" />}
-              Regenerate
-            </Button>
-            <Button
-              onClick={onSave}
-              disabled={saving || tracks.length === 0}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Save to Spotify
-            </Button>
+          <div>
+            <CardTitle className="flex items-center text-gray-100 text-xs">
+              <Play className="w-5 h-5 mr-2 text-green-900" />
+              Generated Playlist ({tracks.length} tracks)
+            </CardTitle>
           </div>
+
+          <div>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                onClick={onRegenerate}
+                disabled={generating}
+                className="border-green-200 hover:bg-green-50 text-gray-100 bg-transparent"
+              >
+                {generating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <RotateCcw className="w-4 h-4 mr-1" />}
+                Regenerate
+              </Button>
+              <Button
+                onClick={onSave}
+                disabled={saving || tracks.length === 0}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                Save to Spotify
+              </Button>
+            </div>
+          </div>
+
         </div>
       </CardHeader>
 
