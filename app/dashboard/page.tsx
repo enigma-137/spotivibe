@@ -254,11 +254,11 @@ export default function Dashboard() {
                       <Button onClick={generatePlaylist} disabled={selectedArtists.size === 0 || generating} className="bg-[#1DB954] hover:bg-green-600 text-black font-medium">
                         {generating ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-1 animate-spin" /> Generating...
+                            <Loader2 className="w-4 h-4 animate-spin" /> Generating...
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-4 h-4 mr-1" /> Generate Playlist
+                            <Sparkles className="w-4 h-4" /> Generate Playlist
                           </>
                         )}
                       </Button>
