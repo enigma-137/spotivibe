@@ -27,7 +27,7 @@ interface PlaylistPreviewProps {
 
 export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, saving }: PlaylistPreviewProps) {
   return (
-    <Card className="bg-black backdrop-blur">
+   <Card className="bg-black backdrop-blur max-w-full sm:max-w-lg mx-auto w-full px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           {/* CardTitle above buttons on mobile */}
