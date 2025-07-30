@@ -39,7 +39,7 @@ export function PlaylistSuccessModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-black">
         <DialogHeader>
           <div className="flex items-center justify-center bg-black mb-4">
             <CheckCircle className="h-12 w-12 text-green-500" />
