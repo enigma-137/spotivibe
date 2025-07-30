@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, RotateCcw, Save, Play } from "lucide-react"
 import Image from "next/image"
+import { PlaylistSuccessModal } from "@/components/playlist-success-modal"
+import { useState } from "react"
 
 interface Track {
   id: string
@@ -20,12 +22,22 @@ interface Track {
 interface PlaylistPreviewProps {
   tracks: Track[]
   onRegenerate: () => void
-  onSave: () => void
+  onSave: (onSuccess?: (playlistData: { name: string; url: string }) => void) => void
   generating: boolean
   saving: boolean
 }
 
 export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, saving }: PlaylistPreviewProps) {
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [savedPlaylistData, setSavedPlaylistData] = useState<{ name: string; url: string } | null>(null)
+
+  const handleSave = () => {
+    onSave((playlistData) => {
+      setSavedPlaylistData(playlistData)
+      setShowSuccessModal(true)
+    })
+  }
+
   return (
     <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
@@ -48,7 +60,7 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
                 Regenerate
               </Button>
               <Button
-                onClick={onSave}
+                onClick={handleSave}
                 disabled={saving || tracks.length === 0}
                 className="bg-green-600 hover:bg-green-700"
               >
@@ -96,6 +108,15 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
           ))}
         </div>
       </CardContent>
+      
+      {savedPlaylistData && (
+        <PlaylistSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+          playlistName={savedPlaylistData.name}
+          playlistUrl={savedPlaylistData.url}
+        />
+      )}
     </Card>
   )
 }

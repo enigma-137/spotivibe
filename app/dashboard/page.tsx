@@ -174,18 +174,19 @@ export default function Dashboard() {
     }
   }
 
-  const savePlaylist = async () => {
+  const savePlaylist = async (onSuccess?: (playlistData: { name: string; url: string }) => void) => {
     if (generatedTracks.length === 0) return
 
     setSaving(true)
     try {
+      const playlistName = `Your Playlist - ${new Date().toLocaleDateString()}`
       const response = await makeAuthenticatedRequest(
         "/api/spotify/save-playlist",
         {
           method: "POST",
           body: JSON.stringify({
             tracks: generatedTracks,
-            name: `Your Playlist - ${new Date().toLocaleDateString()}`,
+            name: playlistName,
           }),
         },
         supabaseJwt,      // Supabase JWT for Authorization header
@@ -193,8 +194,16 @@ export default function Dashboard() {
       )
 
       if (response.ok) {
-        toast.success("Playlist saved successfully! Check your Spotify account")
-        window.location.reload()
+        const data = await response.json()
+        if (onSuccess && data.playlist) {
+          onSuccess({
+            name: data.playlist.name,
+            url: data.playlist.url
+          })
+        } else {
+          toast.success("Playlist saved successfully! Check your Spotify account")
+          window.location.reload()
+        }
       } else {
         throw new Error("Failed to save playlist")
       }
