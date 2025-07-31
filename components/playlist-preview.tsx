@@ -92,7 +92,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
                 disabled={saving || tracks.length === 0}
                 className="bg-green-600 hover:bg-green-700"
               >
-                {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Save to Spotify
               </Button>
             </div>
@@ -123,7 +123,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
                 value={addSongQuery}
                 onChange={e => setAddSongQuery(e.target.value)}
               />
-              {/* Placeholder: Replace with actual search logic and results */}
+      
               <div className="max-h-32 overflow-y-auto">
                 {searchResults.length === 0 ? (
                   <div className="text-gray-400 text-xs">No results</div>
