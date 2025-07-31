@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-
     // Get Spotify access token from user metadata
     const spotifyAccessToken = request.headers.get("x-spotify-token")
 

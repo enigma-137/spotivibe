@@ -36,7 +36,6 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   const [tracks, setTracks] = useState<Track[]>(initialTracks)
   const [showAddSong, setShowAddSong] = useState(false)
   const [addSongQuery, setAddSongQuery] = useState("")
-  // Placeholder: Replace with actual search results logic
   const [searchResults, setSearchResults] = useState<Track[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
@@ -82,8 +81,8 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "authorization": session?.access_token ? `Bearer ${session.access_token}` : "",
-            "x-spotify-token": session?.user?.user_metadata?.spotify_access_token || ""
+            "authorization": localStorage.getItem("supabaseJwt") || "",
+            "x-spotify-token": localStorage.getItem("spotifyToken") || ""
           },
           body: JSON.stringify({ query: addSongQuery })
         })
