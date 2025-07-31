@@ -136,7 +136,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
                   ))
                 )}
               </div>
-              <Button variant="ghost" className="mt-2 w-full" onClick={() => setShowAddSong(false)}>
+              <Button variant="ghost" className="mt-2 text-gray-100 w-full" onClick={() => setShowAddSong(false)}>
                 Cancel
               </Button>
             </div>
