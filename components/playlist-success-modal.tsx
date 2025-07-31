@@ -27,10 +27,10 @@ export function PlaylistSuccessModal({
 }: PlaylistSuccessModalProps) {
   const router = useRouter()
 
-  const handleGoToDashboard = () => {
-    onClose()
-    router.push("/dashboard")
-  }
+  // const handleGoToDashboard = () => {
+  //   onClose()
+  //   router.push("/dashboard")
+  // }
 
   const handleOpenPlaylist = () => {
     window.open(playlistUrl, "_blank")
@@ -49,15 +49,15 @@ export function PlaylistSuccessModal({
             Your playlist "{playlistName}" has been saved to your Spotify account.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex flex-col sm:flex-row gap-4 sm:gap-0">
-          <Button
+        <DialogFooter className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0">
+          {/* <Button
             variant="outline"
             onClick={handleGoToDashboard}
             className="flex items-center bg-gray-800 gap-2 text-gray-100"
           >
             <Home className="h-4 w-4" />
             Go to Dashboard
-          </Button>
+          </Button> */}
           <Button
             onClick={handleOpenPlaylist}
             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-gray-100"

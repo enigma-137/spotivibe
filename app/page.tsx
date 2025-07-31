@@ -10,6 +10,7 @@ import Image from "next/image"
 
 import { useAuth } from "./providers"
 import { supabase } from "@/lib/supabase"
+import { encrypt, decrypt } from "@/utils/crypto"
 
 
 

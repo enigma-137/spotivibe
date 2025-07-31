@@ -2,6 +2,7 @@
 
 import { useAuth } from "../providers"
 import { useState, useEffect } from "react"
+import { encrypt, decrypt } from "@/utils/crypto"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -60,18 +61,23 @@ export default function Dashboard() {
 
     if (supabaseJwt) {
       setSupabaseJwt(supabaseJwt)
-      localStorage.setItem("supabaseJwt", supabaseJwt)
+      localStorage.setItem("supabaseJwt", encrypt(supabaseJwt))
     }
     if (spotifyToken) {
       setAccessToken(spotifyToken)
-      localStorage.setItem("spotifyToken", spotifyToken)
+      localStorage.setItem("spotifyToken", encrypt(spotifyToken))
     }
     if (refresh) {
       setRefreshToken(refresh)
-      localStorage.setItem("refreshToken", refresh)
+      // Sending refresh token to set httpOnly cookie
+      fetch("/api/auth/set-refresh-cookie", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken: refresh }),
+      });
+
     }
 
-    // To remove tokens from URL after parsing
     if (window.location.hash) {
       window.history.replaceState(null, "", window.location.pathname)
     }
@@ -81,16 +87,17 @@ export default function Dashboard() {
   useEffect(() => {
     if (!supabaseJwt) {
       const storedJwt = localStorage.getItem("supabaseJwt")
-      if (storedJwt) setSupabaseJwt(storedJwt)
+      if (storedJwt) setSupabaseJwt(decrypt(storedJwt))
     }
     if (!accessToken) {
       const storedSpotify = localStorage.getItem("spotifyToken")
-      if (storedSpotify) setAccessToken(storedSpotify)
+      if (storedSpotify) setAccessToken(decrypt(storedSpotify))
     }
-    if (!refreshToken) {
-      const storedRefresh = localStorage.getItem("refreshToken")
-      if (storedRefresh) setRefreshToken(storedRefresh)
-    }
+    // No longer retrieve refreshToken from localStorage; it is managed in httpOnly cookie
+    // if (!refreshToken) {
+    //   const storedRefresh = localStorage.getItem("refreshToken")
+    //   if (storedRefresh) setRefreshToken(decrypt(storedRefresh))
+    // }
   }, [supabaseJwt, accessToken, refreshToken])
 
   useEffect(() => {
@@ -155,8 +162,8 @@ export default function Dashboard() {
             includeRelated,
           }),
         },
-         supabaseJwt,      // Supabase JWT for Authorization header
-        accessToken 
+        supabaseJwt,      // Supabase JWT for Authorization header
+        accessToken
       )
 
       if (response.ok) {
@@ -174,12 +181,14 @@ export default function Dashboard() {
     }
   }
 
-  const savePlaylist = async (onSuccess?: (playlistData: { name: string; url: string }) => void) => {
-    if (generatedTracks.length === 0) return
+  const savePlaylist = async (
+    playlistName: string,
+    onSuccess?: (playlistData: { name: string; url: string }) => void
+  ) => {
+    if (generatedTracks.length === 0) return;
 
-    setSaving(true)
+    setSaving(true);
     try {
-      const playlistName = `Your Playlist - ${new Date().toLocaleDateString()}`
       const response = await makeAuthenticatedRequest(
         "/api/spotify/save-playlist",
         {
@@ -189,31 +198,31 @@ export default function Dashboard() {
             name: playlistName,
           }),
         },
-        supabaseJwt,      // Supabase JWT for Authorization header
-        accessToken 
-      )
+        supabaseJwt, // Supabase JWT for Authorization header
+        accessToken
+      );
 
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (onSuccess && data.playlist) {
           onSuccess({
             name: data.playlist.name,
-            url: data.playlist.url
-          })
+            url: data.playlist.url,
+          });
         } else {
-          toast.success("Playlist saved successfully! Check your Spotify account")
-          window.location.reload()
+          toast.success("Playlist saved successfully! Check your Spotify account");
+          window.location.reload();
         }
       } else {
-        throw new Error("Failed to save playlist")
+        throw new Error("Failed to save playlist");
       }
     } catch (error) {
-      console.error("Error saving playlist:", error)
-      toast.error("Failed to save playlist")
+      console.error("Error saving playlist:", error);
+      toast.error("Failed to save playlist");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -243,7 +252,7 @@ export default function Dashboard() {
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                       <div className="space-y-2 text-gray-100">
                         <Label htmlFor="data-source">Data Source</Label>
-                        <Tabs value={dataSource} onValueChange={(value) => setDataSource(value as "top" | "recent")}> 
+                        <Tabs value={dataSource} onValueChange={(value) => setDataSource(value as "top" | "recent")}>
                           <TabsList className="bg-zinc-800 border border-zinc-700 rounded-md">
                             <TabsTrigger value="top" className="data-[state=active]:bg-[#1DB954] data-[state=active]:text-black text-white">Top Artists</TabsTrigger>
                             <TabsTrigger value="recent" className="data-[state=active]:bg-[#1DB954] data-[state=active]:text-black text-white">Recently Played</TabsTrigger>
@@ -251,7 +260,7 @@ export default function Dashboard() {
                         </Tabs>
                       </div>
                       <div className="flex items-center text-red-100 space-x-2">
-                        <Switch id="include-related"   checked={includeRelated} onCheckedChange={setIncludeRelated} />
+                        <Switch id="include-related" checked={includeRelated} onCheckedChange={setIncludeRelated} />
                         <Label htmlFor="include-related">Include related artists</Label>
                       </div>
                     </div>
@@ -293,7 +302,13 @@ export default function Dashboard() {
               </TabsContent>
 
               <TabsContent value="playlist">
-                <PlaylistPreview tracks={generatedTracks} onRegenerate={generatePlaylist} onSave={savePlaylist} generating={generating} saving={saving} />
+                <PlaylistPreview
+                  tracks={generatedTracks}
+                  onRegenerate={generatePlaylist}
+                  onSave={(playlistName: string, onSuccess?: (playlistData: { name: string; url: string }) => void) => void savePlaylist(playlistName, onSuccess)}
+                  generating={generating}
+                  saving={saving}
+                />
               </TabsContent>
             </Tabs>
           </div>

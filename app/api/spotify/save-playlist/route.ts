@@ -81,14 +81,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Save playlist info to Supabase for user history
-    const { error: insertError } = await supabase.from("playlists").insert({
+    const insertData = {
       user_id: user.id,
       spotify_playlist_id: playlist.id,
       name: playlist.name,
       track_count: tracks.length,
       spotify_url: playlist.external_urls.spotify,
       created_at: new Date().toISOString(),
-    })
+    };
+    console.log("[Spotivibes] Attempting DB insert:", insertData);
+    const { data: dbData, error: insertError } = await supabase.from("playlists").insert(insertData);
+    console.log("[Spotivibes] Insert result:", dbData, insertError);
 
     if (insertError) {
       console.error("Error saving playlist to database:", insertError)

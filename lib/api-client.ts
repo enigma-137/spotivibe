@@ -1,4 +1,21 @@
 import { supabase } from "./supabase"
+import { encrypt, decrypt } from "@/utils/crypto"
+
+// Helper to refresh the Spotify access token
+export async function refreshAccessToken() {
+  // The refresh token is now stored as an httpOnly cookie and sent automatically
+  const response = await fetch("/api/spotify/refresh-token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) throw new Error("Failed to refresh token (cookie missing or invalid)");
+  const data = await response.json();
+  if (data.access_token) {
+    localStorage.setItem("spotifyToken", encrypt(data.access_token));
+    return data.access_token;
+  }
+  throw new Error("No access token returned from refresh");
+}
 
 // Helper function to make authenticated API calls
 export async function makeAuthenticatedRequest(
@@ -37,8 +54,24 @@ export async function makeAuthenticatedRequest(
     headers["X-Spotify-Token"] = spotifyAccessToken
   }
 
-  return fetch(url, {
+  let response = await fetch(url, {
     ...options,
     headers,
-  })
+  });
+
+  // If unauthorized (token expired), try refreshing and retrying once
+  if (response.status === 401 && spotifyAccessToken) {
+    try {
+      const newToken = await refreshAccessToken();
+      headers["X-Spotify-Token"] = newToken;
+      response = await fetch(url, {
+        ...options,
+        headers,
+      });
+    } catch (err) {
+      // Optionally, handle refresh failure (e.g., log out user)
+      throw err;
+    }
+  }
+  return response;
 }

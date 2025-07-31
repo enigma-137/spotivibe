@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, RotateCcw, Save, Play } from "lucide-react"
+import { Loader2, RotateCcw, Save, Play, Plus } from "lucide-react"
 import Image from "next/image"
 import { PlaylistSuccessModal } from "@/components/playlist-success-modal"
 import { useState, useEffect, useRef } from "react"
@@ -24,7 +24,7 @@ interface Track {
 interface PlaylistPreviewProps {
   tracks: Track[]
   onRegenerate: () => void
-  onSave: (onSuccess?: (playlistData: { name: string; url: string }) => void) => void
+  onSave: (playlistName: string, onSuccess?: (playlistData: { name: string; url: string }) => void) => void
   generating: boolean
   saving: boolean
 }
@@ -41,11 +41,10 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   const [searchError, setSearchError] = useState<string | null>(null)
   const { session } = useAuth();
   const searchTimeout = useRef<NodeJS.Timeout | null>(null)
-  const supabaseJwt = localStorage.getItem("supabaseJwt") || ""
-  const accessToken = localStorage.getItem("spotifyToken") || ""
-  const handleSave = () => {
 
-    onSave((playlistData) => {
+  const handleSave = () => {
+    // Pass edited playlist name to onSave
+    onSave(playlistName, (playlistData: { name: string; url: string }) => {
       setSavedPlaylistData({ ...playlistData, name: playlistName })
       setShowSuccessModal(true)
     })
@@ -82,8 +81,8 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "authorization": supabaseJwt,
-            "x-spotify-token": accessToken
+            "Authorization": `Bearer ${localStorage.getItem("supabaseJwt") || ""}`,
+            "X-Spotify-Token": localStorage.getItem("spotifyToken") || ""
           },
           body: JSON.stringify({ query: addSongQuery })
         })
@@ -97,7 +96,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
         setSearchLoading(false)
       }
     }, 400)
-   
+    // Cleanup
     return () => {
       if (searchTimeout.current) clearTimeout(searchTimeout.current)
     }
@@ -106,8 +105,9 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   return (
     <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
-        <div className="flex flex-col items-start sm:items-center justify-between w-full">
-          <div className="flex-1">
+        <div className="flex items-start sm:items-center justify-between w-full">
+
+          <div className="flex-1 ">
             <input
               type="text"
               className="w-full bg-transparent border-b border-green-400 text-lg font-semibold text-gray-100 mb-2 focus:outline-none focus:border-green-600 transition"
@@ -116,37 +116,42 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
               placeholder="Playlist name"
               maxLength={100}
             />
-            <CardTitle className="flex items-center text-gray-100 text-xs mb-2 py-2 sm:mb-0">
+            <CardTitle className="flex items-center text-gray-100 text-xs  sm:mb-0">
               <Play className="w-5 h-5 mr-2 text-green-900" />
               Generated Playlist ({tracks.length} tracks)
             </CardTitle>
           </div>
 
-          <div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={onRegenerate}
-                disabled={generating}
-                className="border-green-200 hover:bg-green-50 text-gray-100 bg-transparent"
-              >
-                {generating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <RotateCcw className="w-4 h-4 mr-1" />}
-                Regenerate
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={saving || tracks.length === 0}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Save to Spotify
-              </Button>
-            </div>
-          </div>
         </div>
       </CardHeader>
 
+
+
       <CardContent>
+
+        <div className="flex space-x-2 juqstify-between gap-6 mb-4">
+          <Button
+            variant="outline"
+            onClick={onRegenerate}
+            disabled={generating}
+            className="border-green-200 hover:bg-green-50 text-gray-100 bg-transparent"
+          >
+            Regenerate
+            {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={saving || tracks.length === 0}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            Spotify
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+
+          </Button>
+        </div>
+
+
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {/* Add Song Button */}
           <div className="mb-2">
@@ -159,7 +164,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
             </Button>
           </div>
 
-          {/* Add Song Modal/Inline Search */}
+  
           {showAddSong && (
             <div className="mb-2 p-2 bg-gray-900 rounded-lg">
               <input
@@ -180,7 +185,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
                   searchResults.map((track) => (
                     <div key={track.id} className="flex items-center justify-between p-1 hover:bg-green-100 rounded cursor-pointer" onClick={() => handleAddTrack(track)}>
                       <span className="text-gray-100 text-xs">{track.name} - {track.artists.map(a => a.name).join(", ")}</span>
-                      <span className="text-green-600 text-xs ml-2">Add</span>
+                      <span className="text-green-600 text-xs ml-2">Add <Plus className="w-4 h-4" /></span>
                     </div>
                   ))
                 )}
@@ -231,7 +236,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
           ))}
         </div>
       </CardContent>
-      
+
       {savedPlaylistData && (
         <PlaylistSuccessModal
           isOpen={showSuccessModal}
