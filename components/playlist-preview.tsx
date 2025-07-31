@@ -41,9 +41,10 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   const [searchError, setSearchError] = useState<string | null>(null)
   const { session } = useAuth();
   const searchTimeout = useRef<NodeJS.Timeout | null>(null)
-
+  const supabaseJwt = localStorage.getItem("supabaseJwt") || ""
+  const accessToken = localStorage.getItem("spotifyToken") || ""
   const handleSave = () => {
-    // Pass edited playlist name to onSave
+
     onSave((playlistData) => {
       setSavedPlaylistData({ ...playlistData, name: playlistName })
       setShowSuccessModal(true)
@@ -81,8 +82,8 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "authorization": localStorage.getItem("supabaseJwt") || "",
-            "x-spotify-token": localStorage.getItem("spotifyToken") || ""
+            "authorization": supabaseJwt,
+            "x-spotify-token": accessToken
           },
           body: JSON.stringify({ query: addSongQuery })
         })
@@ -96,7 +97,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
         setSearchLoading(false)
       }
     }, 400)
-    // Cleanup
+   
     return () => {
       if (searchTimeout.current) clearTimeout(searchTimeout.current)
     }
