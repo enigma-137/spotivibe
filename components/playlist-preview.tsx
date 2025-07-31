@@ -106,7 +106,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   return (
     <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
-        <div className="flex flex-row sm:flex-row items-start sm:items-center justify-between w-full">
+        <div className="flex flex-col items-start sm:items-center justify-between w-full">
           <div className="flex-1">
             <input
               type="text"
