@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, RotateCcw, Save, Play } from "lucide-react"
 import Image from "next/image"
 import { PlaylistSuccessModal } from "@/components/playlist-success-modal"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useAuth } from "../app/providers"
+import toast from "react-hook-toast"
 
 interface Track {
   id: string
@@ -36,6 +38,10 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   const [addSongQuery, setAddSongQuery] = useState("")
   // Placeholder: Replace with actual search results logic
   const [searchResults, setSearchResults] = useState<Track[]>([])
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
+  const { session } = useAuth();
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const handleSave = () => {
     // Pass edited playlist name to onSave
@@ -55,7 +61,47 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
     }
     setShowAddSong(false)
     setAddSongQuery("")
+    setSearchResults([])
   }
+
+  // Debounced search effect
+  useEffect(() => {
+    if (!showAddSong) return;
+    if (!addSongQuery.trim()) {
+      setSearchResults([])
+      setSearchError(null)
+      setSearchLoading(false)
+      return
+    }
+    setSearchLoading(true)
+    setSearchError(null)
+    if (searchTimeout.current) clearTimeout(searchTimeout.current)
+    searchTimeout.current = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/spotify/search-tracks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": session?.access_token ? `Bearer ${session.access_token}` : "",
+            "x-spotify-token": session?.user?.user_metadata?.spotify_access_token || ""
+          },
+          body: JSON.stringify({ query: addSongQuery })
+        })
+        if (!res.ok) throw new Error("Spotify search failed")
+        const data = await res.json()
+        setSearchResults(data.tracks || [])
+        setSearchLoading(false)
+      } catch (err: any) {
+        setSearchError("Failed to search Spotify tracks")
+        setSearchResults([])
+        setSearchLoading(false)
+      }
+    }, 400)
+    // Cleanup
+    return () => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current)
+    }
+  }, [addSongQuery, showAddSong, session])
 
   return (
     <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
@@ -123,9 +169,12 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
                 value={addSongQuery}
                 onChange={e => setAddSongQuery(e.target.value)}
               />
-      
               <div className="max-h-32 overflow-y-auto">
-                {searchResults.length === 0 ? (
+                {searchLoading ? (
+                  <div className="text-gray-400 text-xs">Searching...</div>
+                ) : searchError ? (
+                  <div className="text-red-400 text-xs">{searchError}</div>
+                ) : searchResults.length === 0 && addSongQuery.trim() ? (
                   <div className="text-gray-400 text-xs">No results</div>
                 ) : (
                   searchResults.map((track) => (
