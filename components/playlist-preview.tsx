@@ -27,26 +27,54 @@ interface PlaylistPreviewProps {
   saving: boolean
 }
 
-export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, saving }: PlaylistPreviewProps) {
+export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, generating, saving }: PlaylistPreviewProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [savedPlaylistData, setSavedPlaylistData] = useState<{ name: string; url: string } | null>(null)
+  const [playlistName, setPlaylistName] = useState("My Playlist")
+  const [tracks, setTracks] = useState<Track[]>(initialTracks)
+  const [showAddSong, setShowAddSong] = useState(false)
+  const [addSongQuery, setAddSongQuery] = useState("")
+  // Placeholder: Replace with actual search results logic
+  const [searchResults, setSearchResults] = useState<Track[]>([])
 
   const handleSave = () => {
+    // Pass edited playlist name to onSave
     onSave((playlistData) => {
-      setSavedPlaylistData(playlistData)
+      setSavedPlaylistData({ ...playlistData, name: playlistName })
       setShowSuccessModal(true)
     })
+  }
+
+  const handleRemoveTrack = (id: string) => {
+    setTracks(tracks.filter((track) => track.id !== id))
+  }
+
+  const handleAddTrack = (track: Track) => {
+    if (!tracks.find((t) => t.id === track.id)) {
+      setTracks([...tracks, track])
+    }
+    setShowAddSong(false)
+    setAddSongQuery("")
   }
 
   return (
     <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-          {/* CardTitle above buttons on mobile */}
-          <CardTitle className="flex items-center text-gray-100 text-xs mb-2 py-2 sm:mb-0">
-            <Play className="w-5 h-5 mr-2 text-green-900" />
-            Generated Playlist ({tracks.length} tracks)
-          </CardTitle>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full">
+          <div className="flex-1">
+            <input
+              type="text"
+              className="w-full bg-transparent border-b border-green-400 text-lg font-semibold text-gray-100 mb-2 focus:outline-none focus:border-green-600 transition"
+              value={playlistName}
+              onChange={e => setPlaylistName(e.target.value)}
+              placeholder="Playlist name"
+              maxLength={100}
+            />
+            <CardTitle className="flex items-center text-gray-100 text-xs mb-2 py-2 sm:mb-0">
+              <Play className="w-5 h-5 mr-2 text-green-900" />
+              Generated Playlist ({tracks.length} tracks)
+            </CardTitle>
+          </div>
 
           <div>
             <div className="flex space-x-2">
@@ -74,6 +102,45 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
 
       <CardContent>
         <div className="space-y-2 max-h-96 overflow-y-auto">
+          {/* Add Song Button */}
+          <div className="mb-2">
+            <Button
+              variant="outline"
+              className="border-green-200 hover:bg-green-50 text-gray-100 bg-transparent w-full"
+              onClick={() => setShowAddSong(true)}
+            >
+              + Add Song
+            </Button>
+          </div>
+
+          {/* Add Song Modal/Inline Search */}
+          {showAddSong && (
+            <div className="mb-2 p-2 bg-gray-900 rounded-lg">
+              <input
+                type="text"
+                className="w-full bg-gray-800 border-b border-green-400 text-gray-100 mb-2 focus:outline-none focus:border-green-600 transition"
+                placeholder="Search for a song..."
+                value={addSongQuery}
+                onChange={e => setAddSongQuery(e.target.value)}
+              />
+              {/* Placeholder: Replace with actual search logic and results */}
+              <div className="max-h-32 overflow-y-auto">
+                {searchResults.length === 0 ? (
+                  <div className="text-gray-400 text-xs">No results</div>
+                ) : (
+                  searchResults.map((track) => (
+                    <div key={track.id} className="flex items-center justify-between p-1 hover:bg-green-100 rounded cursor-pointer" onClick={() => handleAddTrack(track)}>
+                      <span className="text-gray-100 text-xs">{track.name} - {track.artists.map(a => a.name).join(", ")}</span>
+                      <span className="text-green-600 text-xs ml-2">Add</span>
+                    </div>
+                  ))
+                )}
+              </div>
+              <Button variant="ghost" className="mt-2 w-full" onClick={() => setShowAddSong(false)}>
+                Cancel
+              </Button>
+            </div>
+          )}
           {tracks.map((track, index) => (
             <motion.div
               key={track.id}
@@ -104,6 +171,13 @@ export function PlaylistPreview({ tracks, onRegenerate, onSave, generating, savi
               </div>
 
               <div className="text-[10px] sm:text-xs text-gray-200 flex-shrink-0 w-5 text-center sm:w-auto">#{index + 1}</div>
+              <button
+                className="ml-2 text-red-400 hover:text-red-600 text-xs sm:text-sm focus:outline-none"
+                title="Remove"
+                onClick={() => handleRemoveTrack(track.id)}
+              >
+                ×
+              </button>
             </motion.div>
           ))}
         </div>
