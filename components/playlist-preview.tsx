@@ -60,7 +60,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   return (
     <Card className="bg-black backdrop-blur w-full max-w-xs sm:max-w-lg mx-auto px-2 sm:px-3 py-2 sm:py-4">
       <CardHeader>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full">
+        <div className="flex flex-row sm:flex-row items-start sm:items-center justify-between w-full">
           <div className="flex-1">
             <input
               type="text"
@@ -147,7 +147,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.02 }}
-              className="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-green-50 transition-colors"
+              className="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-800 hover:text-gray-100 transition-colors"
             >
               <div className="w-9 h-9 sm:w-12 sm:h-12 rounded overflow-hidden bg-gray-200 flex-shrink-0">
                 {track.album.images[0] ? (
