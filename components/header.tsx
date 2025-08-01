@@ -30,7 +30,7 @@ export function Header() {
 
         {user && (
           <div className="flex items-center space-x-4">
-            {/* Desktop: show avatar + name + sign out */}
+          
             <div className="hidden sm:flex items-center space-x-2">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={user.user_metadata?.avatar_url || ""} />
@@ -52,7 +52,7 @@ export function Header() {
               </Button>
             </div>
 
-            {/* Mobile: show dropdown */}
+          
             <div className="sm:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

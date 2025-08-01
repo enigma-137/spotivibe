@@ -162,7 +162,7 @@ export default function Dashboard() {
             includeRelated,
           }),
         },
-        supabaseJwt,      // Supabase JWT for Authorization header
+        supabaseJwt,     
         accessToken
       )
 
@@ -198,7 +198,7 @@ export default function Dashboard() {
             name: playlistName,
           }),
         },
-        supabaseJwt, // Supabase JWT for Authorization header
+        supabaseJwt,
         accessToken
       );
 
