@@ -1,3 +1,9 @@
+// When users sign in we retrieve their Spotify access token
+//  and store it in the session. this is what we use to make authenticated requests to the Spotify API.
+//  The auth is not so strong but it is secure enough for this app. Trust me bro
+
+
+
 "use client"
 
 import { useAuth } from "../providers"

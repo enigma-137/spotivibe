@@ -206,7 +206,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
                   searchResults.map((track) => (
                     <div key={track.id} className="flex items-center justify-between p-1 hover:bg-green-100 rounded cursor-pointer" onClick={() => handleAddTrack(track)}>
                       <span className="text-gray-100 text-xs">{track.name} - {track.artists.map(a => a.name).join(", ")}</span>
-                      <span className="text-green-600 text-xs ml-2">Add <Plus className="w-4 h-4" /></span>
+                      <span className="text-green-600 text-xs ml-2">Add <Plus className="w-4 h-4 inline" /></span>
                     </div>
                   ))
                 )}
