@@ -6,9 +6,7 @@ export async function POST(req: NextRequest) {
   if (!refreshToken) {
     return NextResponse.json({ error: "Missing refresh token in cookie" }, { status: 401 });
   }
-
-  // NOTE: In production, never expose your client secret in frontend code!
-  // Store these securely in environment variables on the server.
+  // Read authorization header
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
   const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");

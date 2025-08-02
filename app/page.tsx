@@ -95,19 +95,20 @@ export default function HomePage() {
       
       <section className="relative min-h-screen flex items-center justify-center">
        
-        <div className="absolute inset-0 z-0">
+         <div className="absolute inset-0 z-0">
           <Image
-            src="/hero.jpg"
+            src="/hero.png"
             alt="Audio Studio"
-            className="w-full h-full object-cover opacity-10"
+            className="w-full h-full object-cover opacity-30"
             width={1920}
             height={1080}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/95" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
+          
+          <div className="absolute inset-0 bg-gradient-to-radial from-green-900/10 via-transparent to-transparent opacity-40" />
         </div>
 
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 text-green-500 opacity-30 drop-shadow-glow">
+        <div className="absolute top-20 left-10 text-green-500 opacity-30 ">
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
             <Music className="w-16 h-16" />
           </motion.div>
@@ -130,10 +131,10 @@ export default function HomePage() {
       
                 <div className="absolute inset-0 w-16 h-16 text-green-400 opacity-40 animate-ping" />
               </div>
-              <h1 className="text-3xl  md:text-7xl font-bold bg-gradient-to-r from-green-400 via-green-300 to-green-500 bg-clip-text text-transparent drop-shadow-glow">
+              <h1 className="text-3xl  md:text-7xl font-bold bg-gradient-to-r from-green-400 via-green-300 to-green-500 bg-clip-text text-transparent">
                 SpotiVibe
               </h1>
-                        <Music className="w-16 h-16 text-green-400 mr-4 animate-glow-pulse drop-shadow-glow" />
+                        <Music className="w-16 h-16 text-green-400 mr-4 " />
             </motion.div>
 
             <motion.p variants={fadeInUp} className="text-sm md:text-2xl text-green-200 mb-12 leading-relaxed">
@@ -145,7 +146,7 @@ export default function HomePage() {
               <Button
                 onClick={() => signInWithSpotify()}
                 size="lg"
-                className="px-12 py-6 text-lg font-semibold rounded-full shadow-lg bg-green-500 hover:bg-green-400 text-black transition-all duration-200 drop-shadow-glow"
+                className="px-12 py-6 text-lg font-semibold rounded-full shadow-lg bg-green-500 hover:bg-green-400 text-black transition-all duration-200 "
               >
                 <Radio className="w-6 h-6 mr-1" />
                 Connect with Spotify
@@ -167,8 +168,7 @@ export default function HomePage() {
           <div className="w-1 h-16 bg-gradient-to-b from-green-400 to-transparent rounded-full drop-shadow-glow" />
         </motion.div>
       </section>
-
-      {/* Features Section */}
+  
       <section className="py-20 relative">
         <div className="container mx-auto px-4">
           <motion.div
@@ -178,14 +178,16 @@ export default function HomePage() {
             variants={stagger}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl md:text-5xl font-bold mb-6 text-green-300 drop-shadow-glow">
+            <motion.h2
+              variants={fadeInUp}
+              className="text-4xl md:text-5xl font-bold mb-6 text-green-300 "
+            >
               How It <span className="text-green-400">Works</span>
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-xl text-green-200 max-w-2xl mx-auto">
               Three simple steps to build your perfect playlist
             </motion.p>
           </motion.div>
-
           <motion.div
             initial="initial"
             whileInView="animate"
@@ -193,17 +195,22 @@ export default function HomePage() {
             variants={stagger}
             className="grid md:grid-cols-3 gap-8"
           >
-            
             <motion.div variants={fadeInUp}>
               <Card className="group text-center p-8 bg-black/70 backdrop-blur-sm border-green-700 hover:border-green-400 transition-all duration-300 hover:shadow-glow">
                 <CardContent className="pt-6">
-                  <div className="relative mb-6">
-                    <Users className="w-16 h-16 text-green-400 mx-auto group-hover:animate-float drop-shadow-glow" />
-                    <div className="absolute inset-0 w-16 h-16 text-green-400 opacity-0 group-hover:opacity-30 mx-auto animate-ping" />
+                  <div className="relative mb-6 flex justify-center">
+                    <Image
+                      src="/artists.png"
+                      alt="Select Artists Screenshot"
+                      width={200}
+                      height={200}
+                      className="rounded-lg border border-green-600 group-hover:scale-105 transition-transform duration-300 drop-shadow-glow"
+                    />
                   </div>
                   <h3 className="text-2xl font-semibold mb-4 text-green-200">Select Artists</h3>
                   <p className="text-green-300 leading-relaxed">
-                    Choose from your favorite artists, recently played tracks, or discover new ones from our vast music database.
+                    Choose from your favorite artists, recently played tracks, or discover new ones from our vast music
+                    database.
                   </p>
                 </CardContent>
               </Card>
@@ -211,13 +218,19 @@ export default function HomePage() {
             <motion.div variants={fadeInUp}>
               <Card className="group text-center p-8 bg-black/70 backdrop-blur-sm border-green-700 hover:border-green-400 transition-all duration-300 hover:shadow-glow">
                 <CardContent className="pt-6">
-                  <div className="relative mb-6">
-                    <Sparkles className="w-16 h-16 text-green-400 mx-auto group-hover:animate-float drop-shadow-glow" />
-                    <div className="absolute inset-0 w-16 h-16 text-green-400 opacity-0 group-hover:opacity-30 mx-auto animate-ping" />
+                  <div className="relative mb-6 flex justify-center">
+                    <Image
+                      src="/playlist.png"
+                      alt="Magic Algorithm Screenshot"
+                      width={200}
+                      height={200}
+                      className="rounded-lg border border-green-600 group-hover:scale-105 transition-transform duration-300 drop-shadow-glow"
+                    />
                   </div>
                   <h3 className="text-2xl font-semibold mb-4 text-green-200">Magic</h3>
                   <p className="text-green-300 leading-relaxed">
-                    The algorithm analyzes your preferences and creates a harmonious blend of tracks that flow perfectly together.
+                    The algorithm analyzes your preferences and creates a harmonious blend of tracks that flow perfectly
+                    together. 
                   </p>
                 </CardContent>
               </Card>
@@ -225,13 +238,18 @@ export default function HomePage() {
             <motion.div variants={fadeInUp}>
               <Card className="group text-center p-8 bg-black/70 backdrop-blur-sm border-green-700 hover:border-green-400 transition-all duration-300 hover:shadow-glow">
                 <CardContent className="pt-6">
-                  <div className="relative mb-6">
-                    <PlayCircle className="w-16 h-16 text-green-400 mx-auto group-hover:animate-float drop-shadow-glow" />
-                    <div className="absolute inset-0 w-16 h-16 text-green-400 opacity-0 group-hover:opacity-30 mx-auto animate-ping" />
+                  <div className="relative mb-6 flex justify-center">
+                    <Image
+                      src="/spotify.png"
+                      alt="Save & Enjoy Screenshot"
+                      width={200}
+                      height={200}
+                      className="rounded-lg border border-green-600 group-hover:scale-105 transition-transform duration-300 drop-shadow-glow"
+                    />
                   </div>
                   <h3 className="text-2xl font-semibold mb-4 text-green-200">Save & Enjoy</h3>
                   <p className="text-green-300 leading-relaxed">
-                    Your custom playlist is automatically saved to your Spotify account, ready to enjoy wherever you go.
+                    Your custom playlist is automatically saved to your Spotify account, ready to enjoy wherever you go with seamless integration.
                   </p>
                 </CardContent>
               </Card>
@@ -239,6 +257,7 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
 
    
       <section className="py-20 relative">
@@ -251,8 +270,8 @@ export default function HomePage() {
             variants={fadeInUp}
             className="text-center max-w-3xl mx-auto"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-green-300 drop-shadow-glow">
-              Ready to Experience the <span className="text-green-400">Future</span> of Music?
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-green-300 ">
+              Ready to Experience your <span className="text-green-400">Taste</span> of Music?
             </h2>
             <p className="text-xl text-green-200 mb-12">
               Join other music lovers who have already discovered their perfect sound with Spotivibes  .

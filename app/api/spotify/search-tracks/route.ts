@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
   const token = authHeader.replace("Bearer ", "");
 
-  // Verify the session with Supabase
+  // Verify the session with Supabas
   const {
     data: { user },
     error: authError,

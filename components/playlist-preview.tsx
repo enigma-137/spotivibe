@@ -9,6 +9,7 @@ import { PlaylistSuccessModal } from "@/components/playlist-success-modal"
 import { useState, useEffect, useRef } from "react"
 import { useAuth } from "../app/providers"
 import toast from "react-hook-toast"
+import { encrypt, decrypt } from "@/utils/crypto"
 
 interface Track {
   id: string
@@ -41,6 +42,8 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
   const [searchError, setSearchError] = useState<string | null>(null)
   const { session } = useAuth();
   const searchTimeout = useRef<NodeJS.Timeout | null>(null)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [supabaseJwt, setSupabaseJwt] = useState<string | null>(null)
 
   const handleSave = () => {
     // Pass edited playlist name to onSave
@@ -76,16 +79,33 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
     setSearchError(null)
     if (searchTimeout.current) clearTimeout(searchTimeout.current)
     searchTimeout.current = setTimeout(async () => {
+
+
+
+      // const supabaseJwt = localStorage.getItem("supabaseJwt")
+      // const accessToken = localStorage.getItem("spotifyToken")
+
       try {
+        const storedJwt = localStorage.getItem("supabaseJwt")
+        const storedSpotify = localStorage.getItem("spotifyToken")
+
+        const decryptedJwt = storedJwt ? decrypt(storedJwt) : ""
+        const decryptedSpotify = storedSpotify ? decrypt(storedSpotify) : ""
+        if (!decryptedJwt || !decryptedSpotify) {
+          setSearchError("Missing authentication tokens")
+          setSearchLoading(false)
+          return
+        }
         const res = await fetch("/api/spotify/search-tracks", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("supabaseJwt") || ""}`,
-            "X-Spotify-Token": localStorage.getItem("spotifyToken") || ""
+            "Authorization": `Bearer ${decryptedJwt}`,
+            "X-Spotify-Token": decryptedSpotify
           },
           body: JSON.stringify({ query: addSongQuery })
         })
+
         if (!res.ok) throw new Error("Spotify search failed")
         const data = await res.json()
         setSearchResults(data.tracks || [])
@@ -94,6 +114,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
         setSearchError("Failed to search Spotify tracks")
         setSearchResults([])
         setSearchLoading(false)
+
       }
     }, 400)
     // Cleanup
@@ -153,7 +174,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
 
 
         <div className="space-y-2 max-h-96 overflow-y-auto">
-  
+
           <div className="mb-2">
             <Button
               variant="outline"
@@ -164,7 +185,7 @@ export function PlaylistPreview({ tracks: initialTracks, onRegenerate, onSave, g
             </Button>
           </div>
 
-  
+
           {showAddSong && (
             <div className="mb-2 p-2 bg-gray-900 rounded-lg">
               <input

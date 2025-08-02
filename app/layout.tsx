@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Spotivibes Playlist Generator",
+  title: "Generate Personalized Playlists",
   description: "Generate personalized playlists based on your favorite artists",
 }
 
