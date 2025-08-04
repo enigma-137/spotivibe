@@ -30,10 +30,10 @@ export default function HomePage() {
 
   const signInWithSpotify = async () => {
 
-    if (user) {
-      router.push("/dashboard")
-      return
-    }
+    // if (user) {
+    //   router.push("/dashboard")
+    //   return
+    // }
     const { error } = await supabase.auth.signInWithOAuth({
 
 

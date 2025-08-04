@@ -71,7 +71,7 @@ export function Header() {
                     onClick={signOut}
                     className="text-sm text-red-600 dark:text-red-400 font-bold cursor-pointer"
                   >
-                    <LogOut className="w-4 h-4 mr-1" />
+                    <LogOut className="w-4 h-4 mr-1 text-red-600 dark:text-red-400" />
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
